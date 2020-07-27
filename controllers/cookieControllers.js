@@ -1,52 +1,50 @@
 // Data
 const { Cookie } = require("../db/models");
 
-exports.cookieList = async (req, res) => {
+exports.fetchCookie = async (cookieId, next) => {
+  try {
+    const cookie = await Cookie.findByPk(cookieId);
+    return cookie;
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.cookieList = async (req, res, next) => {
   try {
     const _cookies = await Cookie.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.json(_cookies);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.cookieCreate = async (req, res) => {
+exports.cookieCreate = async (req, res, next) => {
   try {
     const newCookie = await Cookie.create(req.body);
     res.status(201).json(newCookie);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.cookieUpdate = async (req, res) => {
+exports.cookieUpdate = async (req, res, next) => {
+  console.log("exports.cookieUpdate -> req", req.cookie);
   try {
-    const { cookieId } = req.params;
-    const foundCookie = await Cookie.findByPk(cookieId);
-    if (foundCookie) {
-      await foundCookie.update(req.body);
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "Cookie not found" });
-    }
+    await req.cookie.update(req.body);
+    res.status(204).end();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.cookieDelete = async (req, res) => {
+exports.cookieDelete = async (req, res, next) => {
   try {
-    const { cookieId } = req.params;
-    const foundCookie = await Cookie.findByPk(cookieId);
-    if (foundCookie) {
-      await foundCookie.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "Cookie not found" });
-    }
+    await req.cookie.destroy();
+    res.status(204).end();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
