@@ -1,4 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
+const SequelizeSlugify = require("sequelize-slugify");
+
 const db = require("../db");
 
 class Cookie extends Model {}
@@ -8,6 +10,10 @@ Cookie.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    slug: {
+      type: DataTypes.STRING,
+      unique: true,
     },
     description: {
       type: DataTypes.STRING,
@@ -32,5 +38,9 @@ Cookie.init(
     sequelize: db,
   }
 );
+
+SequelizeSlugify.slugifyModel(Cookie, {
+  source: ["name"],
+});
 
 module.exports = Cookie;
