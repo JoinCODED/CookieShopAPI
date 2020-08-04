@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 // DB
 const db = require("./db");
 
 // Routes
+const bakeryRoutes = require("./routes/bakeries");
 const cookieRoutes = require("./routes/cookies");
 
 // Create Express App instance
@@ -14,13 +16,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  console.log("I'm a middleware method");
-  next();
-});
-
 // Routers
+app.use("/bakeries", bakeryRoutes);
 app.use("/cookies", cookieRoutes);
+app.use("/media", express.static(path.join(__dirname, "media")));
 
 // Not Found Paths
 app.use((req, res, next) => {

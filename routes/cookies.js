@@ -2,12 +2,14 @@ const express = require("express");
 
 // Controllers
 const {
-  cookieCreate,
   cookieList,
   cookieUpdate,
   cookieDelete,
   fetchCookie,
 } = require("../controllers/cookieControllers");
+
+// Middleware
+const upload = require("../middleware/multer");
 
 const router = express.Router();
 
@@ -26,11 +28,8 @@ router.param("cookieId", async (req, res, next, cookieId) => {
 // Cookie List
 router.get("/", cookieList);
 
-// Cookie Create
-router.post("/", cookieCreate);
-
 // Cookie Update
-router.put("/:cookieId", cookieUpdate);
+router.put("/:cookieId", upload.single("image"), cookieUpdate);
 
 // Cookie Delete
 router.delete("/:cookieId", cookieDelete);
