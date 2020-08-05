@@ -17,7 +17,7 @@ exports.bakeryList = async (req, res, next) => {
       include: {
         model: Cookie,
         as: "cookies",
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        attributes: ["id"],
       },
     });
     res.json(bakeries);
