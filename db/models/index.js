@@ -1,5 +1,6 @@
 const Bakery = require("./Bakery");
 const Cookie = require("./Cookie");
+const User = require("./User");
 
 // A bakery has many cookies
 Bakery.hasMany(Cookie, {
@@ -10,4 +11,4 @@ Bakery.hasMany(Cookie, {
 
 Cookie.belongsTo(Bakery, { as: "bakery" });
 
-module.exports = { Bakery, Cookie };
+module.exports = { Bakery, Cookie, User };
