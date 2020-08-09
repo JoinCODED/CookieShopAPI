@@ -9,6 +9,10 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: {
+        args: true,
+        msg: "Username already exists.. Try again",
+      },
     },
     password: {
       type: DataTypes.STRING,
