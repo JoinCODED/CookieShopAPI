@@ -9,6 +9,7 @@ const db = require("./db");
 // Routes
 const bakeryRoutes = require("./routes/bakeries");
 const cookieRoutes = require("./routes/cookies");
+const userRoutes = require("./routes/users");
 
 // Create Express App instance
 const app = express();
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use("/bakeries", bakeryRoutes);
 app.use("/cookies", cookieRoutes);
 app.use("/media", express.static(path.join(__dirname, "media")));
+app.use(userRoutes);
 
 // Not Found Paths
 app.use((req, res, next) => {
@@ -36,7 +38,7 @@ app.use((err, req, res, next) => {
 
 const run = async () => {
   try {
-    await db.sync();
+    await db.sync({ alter: true });
   } catch (error) {
     console.log("run -> error", error);
   }
