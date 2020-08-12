@@ -11,4 +11,8 @@ Bakery.hasMany(Cookie, {
 
 Cookie.belongsTo(Bakery, { as: "bakery" });
 
+User.hasOne(Bakery, { foreignKey: "userId" });
+
+Bakery.belongsTo(User, { as: "user", foreignKey: "userId" });
+
 module.exports = { Bakery, Cookie, User };
