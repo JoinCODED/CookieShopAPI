@@ -32,7 +32,6 @@ exports.jwtStrategy = new JWTStrategy(
     if (Date.now() > jwtPayload.exp) {
       return done(null, false);
     }
-    console.log("Helloo");
     try {
       const user = await User.findByPk(jwtPayload.id);
       return done(null, user);

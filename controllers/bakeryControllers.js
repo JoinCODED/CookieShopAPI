@@ -28,11 +28,20 @@ exports.bakeryList = async (req, res, next) => {
 
 exports.bakeryCreate = async (req, res, next) => {
   try {
+    const foundBakery = await Bakery.findOne({
+      where: { userId: req.user.id },
+    });
+    if (foundBakery) {
+      const err = new Error("You already have a bakery");
+      err.status = 403;
+      next(err);
+    }
     if (req.file) {
       req.body.image = `${req.protocol}://${req.get("host")}/media/${
         req.file.filename
       }`;
     }
+    req.body.userId = req.user.id;
     const newBakery = await Bakery.create(req.body);
     res.status(201).json(newBakery);
   } catch (error) {
@@ -42,13 +51,19 @@ exports.bakeryCreate = async (req, res, next) => {
 
 exports.bakeryUpdate = async (req, res, next) => {
   try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+    if (req.user.role === "admin" || req.user.id === req.bakery.userId) {
+      if (req.file) {
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+          req.file.filename
+        }`;
+      }
+      await req.bakery.update(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
     }
-    await req.bakery.update(req.body);
-    res.status(204).end();
   } catch (error) {
     next(error);
   }
@@ -56,8 +71,14 @@ exports.bakeryUpdate = async (req, res, next) => {
 
 exports.bakeryDelete = async (req, res, next) => {
   try {
-    await req.bakery.destroy();
-    res.status(204).end();
+    if (req.user.role === "admin" || req.user.id === req.bakery.userId) {
+      await req.bakery.destroy();
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
   } catch (error) {
     next(error);
   }
@@ -65,14 +86,20 @@ exports.bakeryDelete = async (req, res, next) => {
 
 exports.cookieCreate = async (req, res, next) => {
   try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+    if (req.user.id === req.bakery.userId) {
+      if (req.file) {
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+          req.file.filename
+        }`;
+      }
+      req.body.bakeryId = req.bakery.id;
+      const newCookie = await Cookie.create(req.body);
+      res.status(201).json(newCookie);
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
     }
-    req.body.bakeryId = req.bakery.id;
-    const newCookie = await Cookie.create(req.body);
-    res.status(201).json(newCookie);
   } catch (error) {
     next(error);
   }

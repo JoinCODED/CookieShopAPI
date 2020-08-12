@@ -40,12 +40,26 @@ router.post(
 );
 
 // Bakery Update
-router.put("/:bakeryId", upload.single("image"), bakeryUpdate);
+router.put(
+  "/:bakeryId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  bakeryUpdate
+);
 
 // Bakery Delete
-router.delete("/:bakeryId", bakeryDelete);
+router.delete(
+  "/:bakeryId",
+  passport.authenticate("jwt", { session: false }),
+  bakeryDelete
+);
 
 // Cookie Create
-router.post("/:bakeryId/cookies", upload.single("image"), cookieCreate);
+router.post(
+  "/:bakeryId/cookies",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  cookieCreate
+);
 
 module.exports = router;

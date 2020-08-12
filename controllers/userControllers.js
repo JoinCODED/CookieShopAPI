@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { JWT_EXPIRATION_MS, JWT_SECRET } = require("../config/keys");
 
 // Models
-const { User } = require("../db/models");
+const { User, Bakery } = require("../db/models");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -18,7 +18,8 @@ exports.signup = async (req, res, next) => {
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       role: newUser.role,
-      expires: Date.now() + JWT_EXPIRATION_MS,
+      bakerySlug: null,
+      exp: Date.now() + JWT_EXPIRATION_MS,
     };
     const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
     res.status(201).json({ token });
@@ -29,6 +30,7 @@ exports.signup = async (req, res, next) => {
 
 exports.signin = async (req, res, next) => {
   const { user } = req;
+  const bakery = await Bakery.findOne({ where: { userId: user.id } });
   const payload = {
     id: user.id,
     username: user.username,
@@ -36,6 +38,7 @@ exports.signin = async (req, res, next) => {
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
+    bakerySlug: bakery?.slug, // bakery ? bakery.slug : null
     exp: Date.now() + JWT_EXPIRATION_MS,
   };
   const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
