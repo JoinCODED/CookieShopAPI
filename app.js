@@ -5,7 +5,7 @@ const path = require("path");
 const passport = require("passport");
 
 // Strategies
-const { localStrategy } = require("./middleware/passport");
+const { localStrategy, jwtStrategy } = require("./middleware/passport");
 
 // DB
 const db = require("./db");
@@ -22,6 +22,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 // Routers
 app.use("/bakeries", bakeryRoutes);
@@ -44,7 +45,7 @@ app.use((err, req, res, next) => {
 
 const run = async () => {
   try {
-    await db.sync({ alter: true });
+    await db.sync();
   } catch (error) {
     console.log("run -> error", error);
   }
