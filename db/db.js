@@ -9,7 +9,7 @@ const { Sequelize } = require("sequelize");
 //   logging: false,
 // });
 
-const db = new Sequelize(process.env.HEROKU_POSTGRESQL_BRONZE_URL, {
+const db = new Sequelize(process.env.DATABASE_URL, {
   // username: "postgres",
   // password: "password",
   // database: "cookieshop_db",
