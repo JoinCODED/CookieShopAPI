@@ -9,13 +9,12 @@ const { Sequelize } = require("sequelize");
 //   logging: false,
 // });
 
-const db = new Sequelize({
-  username: "postgres",
-  password: "password",
-  database: "cookieshop_db",
+const db = new Sequelize(process.env.HEROKU_POSTGRESQL_BRONZE_URL, {
+  // username: "postgres",
+  // password: "password",
+  // database: "cookieshop_db",
   dialect: "postgres",
   logging: false,
-  use_env_variable: "DATABASE_URL",
 });
 
 module.exports = db;
