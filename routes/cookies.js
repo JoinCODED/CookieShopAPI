@@ -10,6 +10,7 @@ const {
 
 // Middleware
 const upload = require("../middleware/multer");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -29,9 +30,18 @@ router.param("cookieId", async (req, res, next, cookieId) => {
 router.get("/", cookieList);
 
 // Cookie Update
-router.put("/:cookieId", upload.single("image"), cookieUpdate);
+router.put(
+  "/:cookieId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  cookieUpdate
+);
 
 // Cookie Delete
-router.delete("/:cookieId", cookieDelete);
+router.delete(
+  "/:cookieId",
+  passport.authenticate("jwt", { session: false }),
+  cookieDelete
+);
 
 module.exports = router;

@@ -34,7 +34,7 @@ exports.bakeryCreate = async (req, res, next) => {
     if (foundBakery) {
       const err = new Error("You already have a bakery");
       err.status = 403;
-      next(err);
+      return next(err);
     }
     if (req.file) {
       req.body.image = `${req.protocol}://${req.get("host")}/media/${

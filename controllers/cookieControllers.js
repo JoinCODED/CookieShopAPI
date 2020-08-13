@@ -3,7 +3,13 @@ const { Cookie, Bakery } = require("../db/models");
 
 exports.fetchCookie = async (cookieId, next) => {
   try {
-    const cookie = await Cookie.findByPk(cookieId);
+    const cookie = await Cookie.findByPk(cookieId, {
+      include: {
+        model: Bakery,
+        as: "bakery",
+        attributes: ["userId"],
+      },
+    });
     return cookie;
   } catch (error) {
     next(error);
@@ -27,14 +33,21 @@ exports.cookieList = async (req, res, next) => {
 };
 
 exports.cookieUpdate = async (req, res, next) => {
+  // console.log("exports.cookieUpdate -> req", req.cookie);
   try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+    if (req.user.id === req.cookie.bakery.userId) {
+      if (req.file) {
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+          req.file.filename
+        }`;
+      }
+      await req.cookie.update(req.body);
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
     }
-    await req.cookie.update(req.body);
-    res.status(204).end();
   } catch (error) {
     next(error);
   }
@@ -42,8 +55,14 @@ exports.cookieUpdate = async (req, res, next) => {
 
 exports.cookieDelete = async (req, res, next) => {
   try {
-    await req.cookie.destroy();
-    res.status(204).end();
+    if (req.user.id === req.cookie.bakery.userId) {
+      await req.cookie.destroy();
+      res.status(204).end();
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
   } catch (error) {
     next(error);
   }

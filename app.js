@@ -53,8 +53,6 @@ const run = async () => {
 
 run();
 
-const PORT = process.env.PORT;
-
-app.listen(PORT, () =>
-  console.log(`The application is running on localhost:${PORT}`)
+app.listen(8000, () =>
+  console.log(`The application is running on localhost:8000`)
 );
