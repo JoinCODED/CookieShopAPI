@@ -38,7 +38,7 @@ exports.signin = async (req, res, next) => {
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
-    bakerySlug: bakery?.slug, // bakery ? bakery.slug : null
+    bakerySlug: bakery ? bakery.slug : null, // bakery ? bakery.slug : null
     exp: Date.now() + JWT_EXPIRATION_MS,
   };
   const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
