@@ -53,9 +53,9 @@ exports.bakeryUpdate = async (req, res, next) => {
   try {
     if (req.user.role === "admin" || req.user.id === req.bakery.userId) {
       if (req.file) {
-        req.body.image = `${req.protocol}://${req.get("host")}/media/${
-          req.file.filename
-        }`;
+        req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+          "host"
+        )}/media/${req.file.filename}`;
         console.log("exports.bakeryUpdate -> req.body.image", req.body.image);
       }
       await req.bakery.update(req.body);
@@ -89,9 +89,9 @@ exports.cookieCreate = async (req, res, next) => {
   try {
     if (req.user.id === req.bakery.userId) {
       if (req.file) {
-        req.body.image = `${req.protocol}://${req.get("host")}/media/${
-          req.file.filename
-        }`;
+        req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+          "host"
+        )}/media/${req.file.filename}`;
       }
       req.body.bakeryId = req.bakery.id;
       const newCookie = await Cookie.create(req.body);
