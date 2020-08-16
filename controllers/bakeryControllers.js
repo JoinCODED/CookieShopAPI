@@ -37,9 +37,7 @@ exports.bakeryCreate = async (req, res, next) => {
       return next(err);
     }
     if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
+      req.body.image = `https://${req.get("host")}/media/${req.file.filename}`;
     }
     req.body.userId = req.user.id;
     const newBakery = await Bakery.create(req.body);
@@ -53,7 +51,7 @@ exports.bakeryUpdate = async (req, res, next) => {
   try {
     if (req.user.role === "admin" || req.user.id === req.bakery.userId) {
       if (req.file) {
-        req.body.image = `https://${req.get("host")}/media/${
+        req.body.image = `${req.protocol}://${req.get("host")}/media/${
           req.file.filename
         }`;
         console.log("exports.bakeryUpdate -> req.body.image", req.body.image);
