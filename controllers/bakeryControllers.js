@@ -37,7 +37,9 @@ exports.bakeryCreate = async (req, res, next) => {
       return next(err);
     }
     if (req.file) {
-      req.body.image = `https://${req.get("host")}/media/${req.file.filename}`;
+      req.body.image = `${process.env.PORT ? "https" : "http"}://${req.get(
+        "host"
+      )}/media/${req.file.filename}`;
     }
     req.body.userId = req.user.id;
     const newBakery = await Bakery.create(req.body);
