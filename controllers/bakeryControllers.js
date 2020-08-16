@@ -53,7 +53,7 @@ exports.bakeryUpdate = async (req, res, next) => {
   try {
     if (req.user.role === "admin" || req.user.id === req.bakery.userId) {
       if (req.file) {
-        req.body.image = `${req.protocol}://${req.get("host")}/media/${
+        req.body.image = `https://${req.get("host")}/media/${
           req.file.filename
         }`;
         console.log("exports.bakeryUpdate -> req.body.image", req.body.image);
